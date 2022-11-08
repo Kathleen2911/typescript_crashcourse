@@ -1,16 +1,19 @@
 <template>
-  <p>ordered by: {{order}}</p>
-  <ul class="job-list">
-    <li v-for="job in orderedJobs" :key="job.id">
-      <h2>{{job.title}} in {{job.location}}</h2>
-      <div class="salary">
-        <p> {{job.salary}}</p>
+  <article class="job-card" v-for="job in jobs" :key="job.slug">
+    <div class="job-card__header">
+      <h2 class="title">{{job.title}}</h2>
+      <div class="meta">
+        <div class="badge badge__level"> {{job.job_types[0]}}</div>
+        <div class="badge badge__contract-type"> {{job.job_types[1]}}</div>
+        <div class="badge badge__contract-duration"> {{job.job_types[2]}}</div>
       </div>
-      <div class="description">
-        <p> Description</p>
-      </div>
-    </li>
-  </ul>
+    </div>
+    <div class="job-card__content">
+      <p class="description" v-html="job.description"></p>
+      <button class="btn btn__primary btn__read-more">Mehr erfahren</button>
+    </div>
+
+  </article>
 </template>
 
 <script lang="ts">
@@ -29,55 +32,80 @@ export default defineComponent({
       required: true,
       type: String as PropType<OrderTerm>
     }
-  },
-  setup(props) {
-    const orderedJobs = computed(() => {
-      let newJobs: Job[] = props.jobs
-      return newJobs.sort((job1: Job, job2: Job) => {
-        return job1[props.order] > job2[props.order] ? 1: -1
-      })
-    })
-
-    return {
-      orderedJobs
-    }
   }
 })
 
 </script>
 
-<style scoped>
-.job-list {
-  max-width: 960px;
-  margin: 40px auto;
-}
-.job-list ul {
-  padding: 0
-}
-.job-list li {
-  list-style-type: none;
-  background: white;
-  padding: 16px;
-  margin: 16px 0;
-  border-radius: 4px;
-}
-.job-list h2 {
-  margin: 0 0 10px;
-  text-transform: capitalize;
-}
-.salary {
-  display: flex;
-}
-.salary img {
-  width: 30px;
-}
-.salary p {
-  color: #17bf66;
-  font-weight: bold;
-  margin: 10px 4px;
-}
-.list-move {
-  transition: all 1s;
-}
+<style lang="scss" scoped>
+  @import "src/assets/variables";
+  @import "src/assets/buttons";
+
+  .job {
+    &-card {
+      width: 40%;
+      margin: 40px auto;
+      background: white;
+      padding: 40px;
+      border-radius: $border-radius-lg;
+      box-shadow: 0 0 50px $blue-15;
+
+      &__header {
+        .title {
+          color: $primary-color;
+        }
+        .meta {
+          display: flex;
+          gap: 15px;
+          margin: $spacer-20 0 40px;
+
+          .badge {
+            font-size: 10px;
+            border-radius: 40px;
+            padding: 5px 10px;
+            text-transform: uppercase;
+
+            &__level {
+              background-color: #dbf0ff;
+              color: #2181db;
+            }
+
+            &__contract-type {
+              background-color: #ebe5ff;
+              color: #774ed5;
+            }
+
+            &__contract-duration {
+              background-color: #ffe7ca;
+              color: #bf8200;
+            }
+          }
+        }
+      }
+
+      &__content {
+        .description {
+          max-height: calc(1.6rem * 8);
+          position: relative;
+          overflow: hidden;
+
+          &::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(180deg, transparent, white);
+          }
+        }
+        .btn__read-more {
+          margin-top: $spacer-20;
+        }
+      }
+    }
+
+
+  }
 
 </style>
